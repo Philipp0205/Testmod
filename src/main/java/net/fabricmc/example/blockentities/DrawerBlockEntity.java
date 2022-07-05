@@ -2,21 +2,25 @@ package net.fabricmc.example.blockentities;
 
 import net.fabricmc.example.ExampleMod;
 import net.fabricmc.example.ImplementedInventory;
+import net.fabricmc.example.gui.DrawerBlockGuiDescription;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 
-public class DrawerBlockEntity extends LootableContainerBlockEntity implements ImplementedInventory  {
+public class DrawerBlockEntity extends LootableContainerBlockEntity implements ImplementedInventory {
 
     private final DefaultedList<ItemStack> items = DefaultedList.ofSize(2, ItemStack.EMPTY);
+
     public DrawerBlockEntity(BlockPos pos, BlockState state) {
         super(ExampleMod.DRAWER_BLOCK_ENTITY, pos, state);
     }
@@ -40,7 +44,7 @@ public class DrawerBlockEntity extends LootableContainerBlockEntity implements I
 
     @Override
     protected Text getContainerName() {
-        return  null;
+        return null;
     }
 
     @Override
@@ -60,7 +64,16 @@ public class DrawerBlockEntity extends LootableContainerBlockEntity implements I
 
     @Override
     protected void setInvStackList(DefaultedList<ItemStack> list) {
+    }
 
+    @Override
+    public ScreenHandler createMenu(int syncId, PlayerInventory inventory, PlayerEntity player) {
+        return new DrawerBlockGuiDescription(syncId, inventory, ScreenHandlerContext.create(world, pos));
+    }
+
+    @Override
+    public Text getDisplayName() {
+        return (Text) new TranslatableTextContent(getCachedState().getBlock().getTranslationKey());
     }
 
 
